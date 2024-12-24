@@ -121,7 +121,7 @@ This project provides a **calendar-based** task manager, allowing you to add tas
 
 > Licensed under the [Apache-2.0 license](LICENSE).  
 >  
-> **© 2024 .Smitrani310@gmail.com. All rights reserved.**
+> **© 2024 Smitrani310@gmail.com. All rights reserved.**
 
 ---
 
