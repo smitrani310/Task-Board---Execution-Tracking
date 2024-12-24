@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>לוח משימות - מעקב ביצוע עם הערות והנחיות כלליות</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0; 
+      padding: 0;
+    }
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+      direction: rtl; /* Right-to-left layout */
+    }
+    h1, h2, h3 {
+      margin-bottom: 10px;
+    }
+
+    /* Layout: Calendar (left) + Guidelines (right) */
+    .app-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    /* CALENDAR CONTAINER */
+    .calendar-container {
+      flex: 3; 
+      background: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .calendar-header button {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .calendar-header button:hover {
+      background: #005bb5;
+    }
+
+    /* Extra row for Save/Load Data */
+    .data-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .data-buttons button {
+      background: #666;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .data-buttons button:hover {
+      background: #444;
+    }
+
+    #currentMonthYear {
+      font-size: 1.2rem;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    /* Multi-day Task form (top) */
+    .multi-task-form {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .multi-task-form label {
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+      display: block;
+    }
+    .multi-task-form input[type="text"],
+    .multi-task-form input[type="number"],
+    .multi-task-form input[type="date"] {
+      padding: 4px;
+      font-size: 0.9rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .multi-task-form button {
+      background: #28a745; /* Green */
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-top: 18px; /* align with fields */
+    }
+    .multi-task-form button:hover {
+      background: #218838;
+    }
+
+    /* Days-of-week row */
+    .days-of-week {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .days-of-week div {
+      background: #f5f5f5;
+      padding: 8px;
+      border-radius: 4px;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    /* DAY CELL */
+    .day-cell {
+      background: #fafafa;
+      border: 2px solid #aaa;
+      border-radius: 4px;
+      padding: 6px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* BLANK CELLS - remove their border now */
+    .day-cell.blank {
+      border: none; /* remove border for out-of-month cells */
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .day-number {
+      font-weight: bold;
+    }
+    .day-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .add-task-btn, .add-comment-btn {
+      background: #ccc;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      padding: 3px 6px;
+      cursor: pointer;
+      display: none; /* hidden by default */
+    }
+    .day-cell:hover .add-task-btn,
+    .day-cell:hover .add-comment-btn {
+      display: inline-block; /* visible on hover */
+    }
+    .add-task-btn:hover, .add-comment-btn:hover {
+      background: #aaa;
+    }
+
+    .tasks-container {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 4px;
+    }
+    .comments-container {
+      margin-top: auto; 
+    }
+
+    /* Inline forms (Add Task, Add Comment) single line */
+    .add-task-form, .add-comment-form {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 5px;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .add-task-form input[type="text"] {
+      width: 100px;
+    }
+    .add-task-form input[type="number"] {
+      width: 35px; /* changed from 60px to 35px as in your updated code */
+    }
+    .add-task-form button, .add-comment-form button {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+    .add-task-form button:hover, .add-comment-form button:hover {
+      background: #218838;
+    }
+
+    /* TASK ITEM */
+    .task-item {
+      background: #fff;
+      border: 0px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      padding: 4px;
+      position: relative;
+    }
+    .task-item-title {
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: #000; 
+    }
+    .mini-cubes {
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .mini-cube {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 2px;
+      border: 1px solid #ccc;
+      background-color: #eee;
+      cursor: pointer;
+    }
+    .mini-cube.filled {
+      background-color: #1976d2;
+      border-color: #1976d2;
+    }
+    .delete-task-btn {
+      display: none;
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      cursor: pointer;
+    }
+    .task-item:hover .delete-task-btn {
+      display: block;
+    }
+    .delete-task-btn:hover {
+      background: #c82333;
+    }
+
+    /* COMMENT ITEM */
+    .comment-item {
+      background: #fefefe;
+      border: 0px solid #ccc;
+      border-radius: 4px;
+      padding: 4px;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+      position: relative; 
+    }
+    .delete-comment-btn {
+      display: none;
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      cursor: pointer;
+    }
+    .comment-item:hover .delete-comment-btn {
+      display: block;
+    }
+    .delete-comment-btn:hover {
+      background: #c82333;
+    }
+
+    .add-comment-form input[type="text"] {
+      width: 100px;
+    }
+	
+	input[type="color"] {
+	  width: 35px;  /* Adjust to your preference */
+	  height: 20px; /* Same here */
+	  padding: 0;   /* Reset if needed */
+	  border-radius: 2px; /* Optional for round corners */
+	}
+
+	.site-footer {
+	  position: fixed;       /* stay in place, even on scroll */
+	  bottom: 10px;          /* distance from bottom edge */
+	  left: 10px;           /* distance from left edge */
+	  font-size: 0.85rem;    /* adjust text size */
+	  color: #666;           /* text color */
+	  background: #f0f0f0;   /* optional background */
+	  padding: 4px 8px;      /* optional padding */
+	  border-radius: 4px;    /* optional rounded corners */
+	}
+	
+    /* GUIDELINES CONTAINER */
+    .guidelines-container {
+      flex: 1;
+      background: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 300px;
+    }
+    .guidelines-container h2 {
+      margin-bottom: 15px;
+    }
+    .guidelines-form {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .guidelines-form input[type="text"] {
+      flex: 1;
+      font-size: 0.85rem;
+      padding: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .guidelines-form button {
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .guidelines-form button:hover {
+      background: #005bb5;
+    }
+    .guideline-item {
+      background: #fafafa;
+      border: 0px solid #ddd;
+      border-radius: 4px;
+      padding: 6px;
+      margin-bottom: 6px;
+      position: relative;
+    }
+    .delete-guideline-btn {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      cursor: pointer;
+      display: none;
+    }
+    .guideline-item:hover .delete-guideline-btn {
+      display: block;
+    }
+    .delete-guideline-btn:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- LEFT: CALENDAR -->
+    <div class="calendar-container">
+      <h1>לוח משימות - מעקב ביצוע</h1>
+
+      <!-- Header Row (Month Nav + Multi-day Task Form + Save/Load) -->
+      <div class="header-row">
+        <!-- Month Navigation -->
+        <div class="calendar-header">
+          <button id="prevMonthBtn">חודש קודם</button>
+          <h2 id="currentMonthYear"></h2>
+          <button id="nextMonthBtn">חודש הבא</button>
+        </div>
+
+        <!-- Data Buttons for Save/Load -->
+        <div class="data-buttons">
+          <button id="saveDataBtn">שמירת נתונים</button>
+          <button id="loadDataBtn">טעינת נתונים</button>
+          <!-- Hidden file input for loading data -->
+          <input type="file" id="loadDataFile" accept=".json" style="display: none;" />
+        </div>
+
+        <!-- Multi-Day Task Form -->
+        <form id="multiTaskForm" class="multi-task-form">
+          <div>
+            <label for="multiTaskName">שם המשימה:</label>
+            <input type="text" id="multiTaskName" required/>
+          </div>
+          <div>
+            <label for="multiTaskTotal">תתי-מטלות:</label>
+            <input type="number" id="multiTaskTotal" min="1" max="20" value="1"/>
+          </div>
+          <div>
+            <label for="multiStartDate">תאריך התחלה:</label>
+            <input type="date" id="multiStartDate" required/>
+          </div>
+          <div>
+            <label for="multiEndDate">תאריך סיום:</label>
+            <input type="date" id="multiEndDate" required/>
+          </div>
+          <button type="submit">הוסף למשבצות</button>
+        </form>
+      </div>
+
+      <!-- Days of Week -->
+      <div class="days-of-week">
+        <div>ראשון</div>
+        <div>שני</div>
+        <div>שלישי</div>
+        <div>רביעי</div>
+        <div>חמישי</div>
+        <div>שישי</div>
+        <div>שבת</div>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div id="calendar" class="calendar"></div>
+    </div>
+
+    <!-- RIGHT: GUIDELINES PANEL -->
+    <div class="guidelines-container">
+      <h2>הנחיות כלליות</h2>
+      <!-- Guidelines Form -->
+      <form id="guidelinesForm" class="guidelines-form">
+        <input type="text" id="guidelineText" placeholder="הקלד הנחיה..." required />
+        <button type="submit">הוסף הנחיה</button>
+      </form>
+      <!-- Guidelines List -->
+      <div id="guidelinesList"></div>
+    </div>
+  </div>
+
+  <script>
+    /*************************************************************
+     *  GLOBAL STATE & INIT
+     *************************************************************/
+    let currentYear, currentMonth;
+    let dayTasks = {};       // { "YYYY-MM-DD": [ {title, total, completed}, ...], ... }
+    let dayComments = {};    // { "YYYY-MM-DD": [ { text, color }, ... ], ... }
+    let guidelines = [];     // [ { text: "some text" }, ... ]
+
+    // DOM references
+    const calendarEl        = document.getElementById("calendar");
+    const currentMonthYearEl= document.getElementById("currentMonthYear");
+    const prevMonthBtn      = document.getElementById("prevMonthBtn");
+    const nextMonthBtn      = document.getElementById("nextMonthBtn");
+    const multiTaskForm     = document.getElementById("multiTaskForm");
+    const multiTaskName     = document.getElementById("multiTaskName");
+    const multiTaskTotal    = document.getElementById("multiTaskTotal");
+    const multiStartDate    = document.getElementById("multiStartDate");
+    const multiEndDate      = document.getElementById("multiEndDate");
+
+    // Save/Load
+    const saveDataBtn       = document.getElementById("saveDataBtn");
+    const loadDataBtn       = document.getElementById("loadDataBtn");
+    const loadDataFile      = document.getElementById("loadDataFile");
+
+    // Guidelines
+    const guidelinesForm    = document.getElementById("guidelinesForm");
+    const guidelineText     = document.getElementById("guidelineText");
+    const guidelinesListEl  = document.getElementById("guidelinesList");
+
+    init();
+
+    function init() {
+      // Load from localStorage
+      loadTasksFromLocalStorage();
+      loadCommentsFromLocalStorage();
+      loadGuidelinesFromLocalStorage();
+
+      // Current date
+      const today = new Date();
+      currentYear  = today.getFullYear();
+      currentMonth = today.getMonth();
+
+      // Render
+      renderCalendar();
+      renderGuidelines();
+
+      // Event listeners
+      prevMonthBtn.addEventListener("click", () => changeMonth(-1));
+      nextMonthBtn.addEventListener("click", () => changeMonth(1));
+      multiTaskForm.addEventListener("submit", handleMultiTaskSubmit);
+
+      // Save/Load Data
+      saveDataBtn.addEventListener("click", exportAllDataAsFile);
+      loadDataBtn.addEventListener("click", () => loadDataFile.click());
+      loadDataFile.addEventListener("change", handleLoadDataFile);
+
+      // Guidelines
+      guidelinesForm.addEventListener("submit", handleGuidelineSubmit);
+    }
+
+    /*************************************************************
+     *  LOCAL STORAGE
+     *************************************************************/
+    function loadTasksFromLocalStorage() {
+      const stored = localStorage.getItem("dayTasks");
+      dayTasks = stored ? JSON.parse(stored) : {};
+    }
+    function saveTasksToLocalStorage() {
+      localStorage.setItem("dayTasks", JSON.stringify(dayTasks));
+    }
+
+    function loadCommentsFromLocalStorage() {
+      const stored = localStorage.getItem("dayComments");
+      dayComments = stored ? JSON.parse(stored) : {};
+    }
+    function saveCommentsToLocalStorage() {
+      localStorage.setItem("dayComments", JSON.stringify(dayComments));
+    }
+
+    function loadGuidelinesFromLocalStorage() {
+      const stored = localStorage.getItem("guidelines");
+      guidelines = stored ? JSON.parse(stored) : [];
+    }
+    function saveGuidelinesToLocalStorage() {
+      localStorage.setItem("guidelines", JSON.stringify(guidelines));
+    }
+
+    /*************************************************************
+     *  SAVE / LOAD DATA MANUALLY
+     *************************************************************/
+    function getAllData() {
+      return {
+        dayTasks,
+        dayComments,
+        guidelines
+      };
+    }
+
+    function setAllData(newData) {
+      if (newData.dayTasks) {
+        dayTasks = newData.dayTasks;
+      }
+      if (newData.dayComments) {
+        dayComments = newData.dayComments;
+      }
+      if (newData.guidelines) {
+        guidelines = newData.guidelines;
+      }
+    }
+
+    function exportAllDataAsFile() {
+      const data = getAllData();
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "myCalendarData.json";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function handleLoadDataFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const loaded = JSON.parse(text);
+        setAllData(loaded);
+
+        // Save to localStorage
+        saveTasksToLocalStorage();
+        saveCommentsToLocalStorage();
+        saveGuidelinesToLocalStorage();
+
+        renderCalendar();
+        renderGuidelines();
+        alert("הנתונים נטענו בהצלחה!");
+      } catch (err) {
+        alert("שגיאה בטעינת הנתונים: " + err.message);
+      } finally {
+        loadDataFile.value = "";
+      }
+    }
+
+    /*************************************************************
+     *  CALENDAR RENDERING & NAVIGATION
+     *************************************************************/
+    function renderCalendar() {
+      calendarEl.innerHTML = "";
+
+      const dateObj = new Date(currentYear, currentMonth);
+      const monthNameHe = dateObj.toLocaleString("he-IL", { month: "long" });
+      currentMonthYearEl.textContent = `${monthNameHe} ${dateObj.getFullYear()}`;
+
+      const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+      const lastDayOfMonth  = new Date(currentYear, currentMonth + 1, 0);
+      const startDayIndex   = firstDayOfMonth.getDay(); // 0..6 => Sunday..Saturday
+      const totalDays       = lastDayOfMonth.getDate();
+
+      // Blank cells before the 1st
+      for (let i = 0; i < startDayIndex; i++) {
+        const blankCell = document.createElement("div");
+        blankCell.className = "day-cell blank";
+        calendarEl.appendChild(blankCell);
+      }
+
+      // Actual days
+      for (let day = 1; day <= totalDays; day++) {
+        const dayCell = document.createElement("div");
+        dayCell.classList.add("day-cell");
+
+        // day header
+        const dayHeader = document.createElement("div");
+        dayHeader.className = "day-header";
+
+        const dayNumber = document.createElement("div");
+        dayNumber.className = "day-number";
+        dayNumber.textContent = day;
+
+        const actionsContainer = document.createElement("div");
+        actionsContainer.className = "day-actions";
+
+        const addTaskBtn = document.createElement("button");
+        addTaskBtn.className = "add-task-btn";
+        addTaskBtn.textContent = "הוסף משימה";
+        const dayKey = formatDateKey(currentYear, currentMonth, day);
+        addTaskBtn.addEventListener("click", () => toggleAddTaskForm(dayKey));
+
+        const addCommentBtn = document.createElement("button");
+        addCommentBtn.className = "add-comment-btn";
+        addCommentBtn.textContent = "הוסף הערה";
+        addCommentBtn.addEventListener("click", () => toggleAddCommentForm(dayKey));
+
+        actionsContainer.appendChild(addTaskBtn);
+        actionsContainer.appendChild(addCommentBtn);
+
+        dayHeader.appendChild(dayNumber);
+        dayHeader.appendChild(actionsContainer);
+
+        // tasks container
+        const tasksContainer = document.createElement("div");
+        tasksContainer.className = "tasks-container";
+
+        // retrieve tasks
+        const dayKey2 = formatDateKey(currentYear, currentMonth, day);
+        const tasks = dayTasks[dayKey2] || [];
+        tasks.forEach((task, index) => {
+          const taskItem = createTaskItem(dayKey2, task, index);
+          tasksContainer.appendChild(taskItem);
+        });
+
+        // comments container
+        const commentsContainer = document.createElement("div");
+        commentsContainer.className = "comments-container";
+        const comments = dayComments[dayKey2] || [];
+        comments.forEach((commentObj, idx) => {
+          const commentDiv = createCommentItem(dayKey2, idx, commentObj);
+          commentsContainer.appendChild(commentDiv);
+        });
+
+        // assemble
+        dayCell.appendChild(dayHeader);
+        dayCell.appendChild(tasksContainer);
+        dayCell.appendChild(commentsContainer);
+
+        calendarEl.appendChild(dayCell);
+      }
+    }
+
+    function changeMonth(offset) {
+      currentMonth += offset;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+    }
+
+    /*************************************************************
+     *  TASKS: CREATE, UPDATE, DELETE
+     *************************************************************/
+    function createTaskItem(dayKey, task, taskIndex) {
+      const item = document.createElement("div");
+      item.className = "task-item";
+
+      // Delete button
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-task-btn";
+      deleteBtn.textContent = "מחק";
+      deleteBtn.addEventListener("click", () => {
+        deleteTask(dayKey, taskIndex);
+      });
+      item.appendChild(deleteBtn);
+
+      // Title
+      const titleEl = document.createElement("div");
+      titleEl.className = "task-item-title";
+      titleEl.textContent = task.title;
+
+      // Green if all completed
+      if (task.completed === task.total && task.total > 0) {
+        titleEl.style.color = "green";
+      } else {
+        titleEl.style.color = "#000";
+      }
+      item.appendChild(titleEl);
+
+      // Mini-cubes
+      const cubesContainer = document.createElement("div");
+      cubesContainer.className = "mini-cubes";
+      for (let i = 0; i < task.total; i++) {
+        const cube = document.createElement("div");
+        cube.className = "mini-cube";
+        if (i < task.completed) {
+          cube.classList.add("filled");
+        }
+        cube.addEventListener("click", () => {
+          if (i < task.completed) {
+            task.completed = i; // unfill from i onward
+          } else {
+            task.completed = i + 1; // fill
+          }
+          updateTask(dayKey, taskIndex, task);
+        });
+        cubesContainer.appendChild(cube);
+      }
+      item.appendChild(cubesContainer);
+
+      return item;
+    }
+
+    function addTask(dayKey, newTask) {
+      if (!dayTasks[dayKey]) {
+        dayTasks[dayKey] = [];
+      }
+      dayTasks[dayKey].push(newTask);
+      saveTasksToLocalStorage();
+      renderCalendar();
+    }
+
+    function updateTask(dayKey, taskIndex, updatedTask) {
+      dayTasks[dayKey][taskIndex] = updatedTask;
+      saveTasksToLocalStorage();
+      renderCalendar();
+    }
+
+    function deleteTask(dayKey, taskIndex) {
+      dayTasks[dayKey].splice(taskIndex, 1);
+      if (dayTasks[dayKey].length === 0) {
+        delete dayTasks[dayKey];
+      }
+      saveTasksToLocalStorage();
+      renderCalendar();
+    }
+
+    /*************************************************************
+     *  COMMENTS
+     *************************************************************/
+    function addComment(dayKey, text, color) {
+      if (!dayComments[dayKey]) {
+        dayComments[dayKey] = [];
+      }
+      dayComments[dayKey].push({ text, color });
+      saveCommentsToLocalStorage();
+      renderCalendar();
+    }
+
+    function createCommentItem(dayKey, commentIndex, commentObj) {
+      const div = document.createElement("div");
+      div.className = "comment-item";
+      div.textContent = commentObj.text;
+      div.style.color = commentObj.color || "#000";
+
+      // Delete button
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete-comment-btn";
+      delBtn.textContent = "מחק";
+      delBtn.addEventListener("click", () => {
+        deleteComment(dayKey, commentIndex);
+      });
+      div.appendChild(delBtn);
+
+      return div;
+    }
+
+    function deleteComment(dayKey, commentIndex) {
+      dayComments[dayKey].splice(commentIndex, 1);
+      if (dayComments[dayKey].length === 0) {
+        delete dayComments[dayKey];
+      }
+      saveCommentsToLocalStorage();
+      renderCalendar();
+    }
+
+    function toggleAddCommentForm(dayKey) {
+      const dayCells = document.querySelectorAll(".day-cell");
+      dayCells.forEach((cell) => {
+        const dayNumberEl = cell.querySelector(".day-number");
+        if (!dayNumberEl) return;
+        const dayNumber = parseInt(dayNumberEl.textContent, 10);
+
+        const cellKey = formatDateKey(currentYear, currentMonth, dayNumber);
+        if (cellKey === dayKey) {
+          const existingForm = cell.querySelector(".add-comment-form");
+          if (existingForm) {
+            existingForm.remove();
+            return;
+          }
+          const form = document.createElement("form");
+          form.className = "add-comment-form";
+          form.style.display = "block";
+
+          // comment text
+          const commentInput = document.createElement("input");
+          commentInput.type = "text";
+          commentInput.placeholder = "הוסף הערה";
+          commentInput.required = true;
+
+          // color input
+          const colorInput = document.createElement("input");
+          colorInput.type = "color";
+          colorInput.value = "#000000";
+
+          // submit button
+          const submitBtn = document.createElement("button");
+          submitBtn.type = "submit";
+          submitBtn.textContent = "הוסף";
+
+          form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const text = commentInput.value.trim();
+            const chosenColor = colorInput.value;
+            if (!text) return;
+            addComment(cellKey, text, chosenColor);
+            form.remove();
+          });
+
+          form.appendChild(commentInput);
+          form.appendChild(colorInput);
+          form.appendChild(submitBtn);
+          cell.appendChild(form);
+        }
+      });
+    }
+
+    /*************************************************************
+     *  MULTI-DAY TASK
+     *************************************************************/
+    function handleMultiTaskSubmit(e) {
+      e.preventDefault();
+      const title = multiTaskName.value.trim();
+      const total = parseInt(multiTaskTotal.value, 10) || 1;
+      const start = new Date(multiStartDate.value);
+      const end   = new Date(multiEndDate.value);
+
+      if (!title || isNaN(start.getTime()) || isNaN(end.getTime()) || start > end) {
+        alert("נא למלא שם משימה ותאריכים תקינים.");
+        return;
+      }
+
+      // For each day in [start, end], add the same task
+      let curr = new Date(start);
+      while (curr <= end) {
+        const y = curr.getFullYear();
+        const m = curr.getMonth();
+        const d = curr.getDate();
+        const dayKey = formatDateKey(y, m, d);
+        addTask(dayKey, { title, total, completed: 0 });
+        curr.setDate(curr.getDate() + 1);
+      }
+
+      // reset
+      multiTaskName.value  = "";
+      multiTaskTotal.value = "1";
+      multiStartDate.value = "";
+      multiEndDate.value   = "";
+    }
+
+    /*************************************************************
+     *  SHOW "ADD TASK" FORM DYNAMICALLY
+     *************************************************************/
+    function toggleAddTaskForm(dayKey) {
+      const dayCells = document.querySelectorAll(".day-cell");
+      dayCells.forEach((cell) => {
+        const dayNumberEl = cell.querySelector(".day-number");
+        if (!dayNumberEl) return;
+        const dayNumber = parseInt(dayNumberEl.textContent, 10);
+
+        const cellKey = formatDateKey(currentYear, currentMonth, dayNumber);
+        if (cellKey === dayKey) {
+          const existingForm = cell.querySelector(".add-task-form");
+          if (existingForm) {
+            existingForm.remove();
+            return;
+          }
+          const form = document.createElement("form");
+          form.className = "add-task-form";
+          form.style.display = "block";
+
+          // title input
+          const titleInput = document.createElement("input");
+          titleInput.type = "text";
+          titleInput.placeholder = "שם המשימה";
+          titleInput.required = true;
+
+          // number input
+          const cubesInput = document.createElement("input");
+          cubesInput.type = "number";
+          cubesInput.placeholder = "# תתי-מטלות";
+          cubesInput.min = "1";
+          cubesInput.max = "20";
+          cubesInput.value = "1";
+
+          // submit
+          const submitBtn = document.createElement("button");
+          submitBtn.type = "submit";
+          submitBtn.textContent = "הוסף";
+
+          form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const title = titleInput.value.trim();
+            const total = parseInt(cubesInput.value, 10) || 1;
+            addTask(cellKey, { title, total, completed: 0 });
+            form.remove();
+          });
+
+          form.appendChild(titleInput);
+          form.appendChild(cubesInput);
+          form.appendChild(submitBtn);
+
+          cell.appendChild(form);
+        }
+      });
+    }
+
+    /*************************************************************
+     *  UTILITIES
+     *************************************************************/
+    function formatDateKey(year, month, day) {
+      const m = String(month + 1).padStart(2, "0");
+      const d = String(day).padStart(2, "0");
+      return `${year}-${m}-${d}`;
+    }
+
+    /*************************************************************
+     *  GUIDELINES
+     *************************************************************/
+    function renderGuidelines() {
+      guidelinesListEl.innerHTML = "";
+      guidelines.forEach((gl, index) => {
+        const item = document.createElement("div");
+        item.className = "guideline-item";
+
+        // delete
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete-guideline-btn";
+        delBtn.textContent = "מחק";
+        delBtn.addEventListener("click", () => {
+          deleteGuideline(index);
+        });
+        item.appendChild(delBtn);
+
+        // text: add a number in front, e.g. "1) ..."
+        const textEl = document.createElement("div");
+        textEl.textContent = `${index + 1}) ${gl.text}`;
+        item.appendChild(textEl);
+
+        guidelinesListEl.appendChild(item);
+      });
+    }
+
+    function handleGuidelineSubmit(e) {
+      e.preventDefault();
+      const text = guidelineText.value.trim();
+      if (!text) return;
+      addGuideline({ text });
+      guidelineText.value = "";
+    }
+
+    function addGuideline(newGL) {
+      guidelines.push(newGL);
+      saveGuidelinesToLocalStorage();
+      renderGuidelines();
+    }
+
+    function deleteGuideline(index) {
+      guidelines.splice(index, 1);
+      saveGuidelinesToLocalStorage();
+      renderGuidelines();
+    }
+  </script>
+  <footer class="site-footer">
+    © 2024 .Smitrani310@gmail.com. All rights reserved
+  </footer>
+</body>
+</html>
