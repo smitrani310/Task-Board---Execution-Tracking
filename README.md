@@ -119,13 +119,9 @@ This project provides a **calendar-based** task manager, allowing you to add tas
 
 ## License
 
-You can include whichever license you prefer (e.g. MIT, Apache 2.0, etc.). For example:
-
-> Licensed under the [MIT License](LICENSE).  
+> Licensed under the [Apache-2.0 license](LICENSE).  
 >  
 > **© 2024 .Smitrani310@gmail.com. All rights reserved.**
-
-Feel free to change the text or remove references to a license if not applicable to your project.
 
 ---
 
