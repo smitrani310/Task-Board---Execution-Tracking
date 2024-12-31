@@ -227,6 +227,9 @@
 
     /* TASK ITEM */
     .task-item {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
       background: #fff;
       border: 0px solid #ddd;
       border-radius: 4px;
@@ -244,24 +247,37 @@
       display: inline-block;
       margin-bottom: 4px;
     }
-    .mini-cube {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      margin-right: 2px;
-      border: 1px solid #ccc;
-      background-color: #eee;
-      cursor: pointer;
-    }
-    .mini-cube.filled {
-      background-color: #1976d2;
-      border-color: #1976d2;
-    }
+	.mini-cube {
+	  display: inline-block;
+	  width: 16px;
+	  height: 16px;
+	  margin-right: 2px;
+	  border: 1px solid #ccc;
+	  background-color: #eee;
+	  position: relative; /* for positioning the pseudo-element */
+	  cursor: pointer;
+	}
+
+	.mini-cube.filled {
+	  background-color: #fff; /* or keep #eee, whichever you prefer */
+	}
+
+	.mini-cube.filled::before {
+	  content: "✓";         /* The check mark text (could use "✔" or "v" too) */
+	  font-size: 14px;      /* Adjust font size to fit */
+	  color: #1976d2;       /* Check mark color */
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%); /* center it in the cube */
+	  pointer-events: none;             /* let clicks pass through */
+	}
+
     .delete-task-btn {
       display: none;
       position: absolute;
-      top: 4px;
-      left: 4px;
+      top: 6px;
+      right: 4px;
       background: #dc3545;
       color: #fff;
       border: none;
