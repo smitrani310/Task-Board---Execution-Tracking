@@ -272,6 +272,22 @@
 	  pointer-events: none;             /* let clicks pass through */
 	}
     
+	/* The X mode */
+	.mini-cube.x-mode {
+	  background-color: #fff; 
+	}
+	
+	.mini-cube.x-mode::before {
+	  content: "x";
+	  font-size: 14px;
+	  color: #c82333;  /* or any color for the “x” */
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+	  pointer-events: none;
+	}	
+		
     .delete-task-btn {
       display: none;
       position: absolute;

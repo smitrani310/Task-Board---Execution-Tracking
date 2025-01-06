@@ -243,6 +243,15 @@
       margin-bottom: 4px;
       color: #000; 
     }
+
+	.task-item.task-v .task-item-title {
+	  color: green;
+	}	
+	
+	.task-item.task-x .task-item-title {
+	  color: red;
+	}	
+	
     .mini-cubes {
       display: inline-block;
       margin-bottom: 4px;
@@ -271,6 +280,22 @@
 	  left: 50%;
 	  transform: translate(-50%, -50%); /* center it in the cube */
 	  pointer-events: none;             /* let clicks pass through */
+	}
+
+	/* The X mode */
+	.mini-cube.x-mode {
+	  background-color: #fff; 
+	}
+	
+	.mini-cube.x-mode::before {
+	  content: "x";
+	  font-size: 14px;
+	  color: #c82333;  /* or any color for the “x” */
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+	  pointer-events: none;
 	}
 
     .delete-task-btn {
@@ -731,55 +756,134 @@
     /*************************************************************
      *  TASKS: CREATE, UPDATE, DELETE
      *************************************************************/
-    function createTaskItem(dayKey, task, taskIndex) {
-      const item = document.createElement("div");
-      item.className = "task-item";
+	function createTaskItem(dayKey, task, taskIndex) {
+	  const item = document.createElement("div");
+	  item.className = "task-item";
 
-      // Delete button
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete-task-btn";
-      deleteBtn.textContent = "מחק";
-      deleteBtn.addEventListener("click", () => {
-        deleteTask(dayKey, taskIndex);
-      });
-      item.appendChild(deleteBtn);
+	  // Delete button
+	  const deleteBtn = document.createElement("button");
+	  deleteBtn.className = "delete-task-btn";
+	  deleteBtn.textContent = "מחק";
+	  deleteBtn.addEventListener("click", () => {
+		deleteTask(dayKey, taskIndex);
+	  });
+	  item.appendChild(deleteBtn);
 
-      // Title
-      const titleEl = document.createElement("div");
-      titleEl.className = "task-item-title";
-      titleEl.textContent = task.title;
+	  // Title
+	  const titleEl = document.createElement("div");
+	  titleEl.className = "task-item-title";
+	  titleEl.textContent = task.title;
+	  item.appendChild(titleEl);
 
-      // Green if all completed
-      if (task.completed === task.total && task.total > 0) {
-        titleEl.style.color = "green";
-      } else {
-        titleEl.style.color = "#000";
-      }
-      item.appendChild(titleEl);
+	  // Container for sub-task cubes
+	  const cubesContainer = document.createElement("div");
+	  cubesContainer.className = "mini-cubes";
 
-      // Mini-cubes
-      const cubesContainer = document.createElement("div");
-      cubesContainer.className = "mini-cubes";
-      for (let i = 0; i < task.total; i++) {
-        const cube = document.createElement("div");
-        cube.className = "mini-cube";
-        if (i < task.completed) {
-          cube.classList.add("filled");
-        }
-        cube.addEventListener("click", () => {
-          if (i < task.completed) {
-            task.completed = i; // unfill from i onward
-          } else {
-            task.completed = i + 1; // fill
-          }
-          updateTask(dayKey, taskIndex, task);
-        });
-        cubesContainer.appendChild(cube);
-      }
-      item.appendChild(cubesContainer);
+	  // For each sub-task:
+	  for (let i = 0; i < task.total; i++) {
+		const cube = document.createElement("div");
+		cube.className = "mini-cube";
 
-      return item;
-    }
+		// If subTaskStates doesn’t exist, create a default array
+		if (!task.subTaskStates) {
+		  task.subTaskStates = [];
+		}
+		if (!task.subTaskStates[i]) {
+		  // default to "empty"
+		  task.subTaskStates[i] = "empty";
+		}
+
+		// Apply the stored state:
+		if (task.subTaskStates[i] === "filled") {
+		  cube.classList.add("filled");
+		} else if (task.subTaskStates[i] === "x-mode") {
+		  cube.classList.add("x-mode");
+		}
+		// else it's empty => no classes
+
+		// On click => cycle states, update data model, re-render if needed
+		cube.addEventListener("click", () => {
+		  const currentState = task.subTaskStates[i];
+
+		  if (currentState === "empty") {
+			// empty => go to "filled"
+			task.subTaskStates[i] = "filled";
+			cube.classList.remove("x-mode");
+			cube.classList.add("filled");
+
+		  } else if (currentState === "filled") {
+			// "filled" => "x-mode"
+			task.subTaskStates[i] = "x-mode";
+			cube.classList.remove("filled");
+			cube.classList.add("x-mode");
+
+		  } else if (currentState === "x-mode") {
+			// "x-mode" => "empty"
+			task.subTaskStates[i] = "empty";
+			cube.classList.remove("x-mode");
+			// no "filled" => empty
+		  }
+
+		  // After each click, update the title color based on all cubes
+		  updateTaskTitleColor(item);
+		  
+		  // Re-save to localStorage
+		  updateTask(dayKey, taskIndex, task);
+
+		});
+
+		cubesContainer.appendChild(cube);
+	  }
+	  item.appendChild(cubesContainer);
+
+	  // Initially, set color to black or check if needed
+	  updateTaskTitleColor(item);
+
+	  return item;
+	}
+
+	function updateTask(dayKey, taskIndex, updatedTask) {
+	  dayTasks[dayKey][taskIndex] = updatedTask;
+	  saveTasksToLocalStorage();
+	  renderCalendar(); // or a partial re-render if you prefer
+	}
+
+	function updateTaskTitleColor(item) {
+	  const titleEl = item.querySelector(".task-item-title");
+	  const cubes = item.querySelectorAll(".mini-cube");
+
+	  let allCheck = true; // all “v”
+	  let allX = true;     // all “x”
+
+	  cubes.forEach((cube) => {
+		const filled = cube.classList.contains("filled");   // “v”
+		const xMode = cube.classList.contains("x-mode");    // “x”
+
+		if (!filled && !xMode) {
+		  // This cube is no mark => neither allCheck nor allX
+		  allCheck = false;
+		  allX = false;
+		} else if (filled) {
+		  // This cube is “v” => cannot be “x” => so not allX
+		  allX = false;
+		} else if (xMode) {
+		  // This cube is “x” => cannot be “v” => so not allCheck
+		  allCheck = false;
+		}
+	  });
+
+	  if (allCheck && cubes.length > 0) {
+		// All cubes are “v”
+		titleEl.style.color = "green";
+	  } else if (allX && cubes.length > 0) {
+		// All cubes are “x”
+		titleEl.style.color = "red";
+	  } else {
+		// Mixed or none => black
+		titleEl.style.color = "#000";
+	  }
+	}
+
 
     function addTask(dayKey, newTask) {
       if (!dayTasks[dayKey]) {
