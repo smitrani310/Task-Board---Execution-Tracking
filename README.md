@@ -129,12 +129,9 @@ If you want to **reset** completely, you can clear `localStorage` via your brows
 
 ## License
 
-By default, this project is unlicensed or uses a simple open-source license. You can add whichever license you prefer (e.g., MIT, Apache 2.0, etc.):
+> Distributed under the [Apache 2.0](LICENSE).  
+> **© 2024 Smitrani310@gmail.com. All rights reserved.**
 
-> Distributed under the [MIT License](LICENSE).  
-> © 2024 .Smitrani310@gmail.com.
-
-Feel free to change the text or remove references to a license if not applicable to your project.
 
 ---
 
