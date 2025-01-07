@@ -6,6 +6,8 @@ A lightweight, **browser-based** task management board with support for:
 - **Manual data save/load** via JSON.  
 - **Guidelines** panel for general instructions.
 
+<img src="images/screenshot.png" alt="screenshot" width="400" />
+
 ## Table of Contents
 1. [Overview](#overview)  
 2. [Features](#features)  
