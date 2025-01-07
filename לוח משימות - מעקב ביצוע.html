@@ -20,7 +20,55 @@
       margin-bottom: 10px;
     }
 
-    /* Layout: Calendar (left) + Guidelines (right) */
+    /****************************************
+     *   TABS SECTION
+     ****************************************/
+    .tabs-header {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+	.topic-tab {
+	  display: inline-flex;    /* or inline-block, so text + 'x' can flow side by side */
+	  align-items: center;     /* vertically center text + x */
+	  background: #ddd;
+	  border: none;
+	  border-radius: 4px;
+	  padding: 6px 10px;
+	  cursor: pointer;
+	  position: relative; /* remove if not needed */
+	}
+    .topic-tab:hover {
+      background: #ccc;
+    }
+    .add-topic-btn {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 20px; /* bigger font for a larger '+' sign */
+    }
+    .add-topic-btn:hover {
+      background: #218838;
+    }
+	.del-topic-btn {
+	  position: static;    /* remove absolute positioning */
+	  margin-left: 0px;    /* space between text and 'x' */
+	  background: transparent;
+	  color: #c00;
+	  border: none;
+	  font-size: 0.9rem;
+	  cursor: pointer;
+	}
+    .del-topic-btn:hover {
+      color: #f00;
+    }
+
+    /****************************************
+     *   LAYOUT: CALENDAR + GUIDELINES
+     ****************************************/
     .app-container {
       display: flex;
       gap: 20px;
@@ -31,11 +79,10 @@
     .calendar-container {
       flex: 3; 
       background: #fff;
-      padding: 20px;
+      padding: 10px;
       border-radius: 6px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-
     .header-row {
       display: flex;
       flex-wrap: wrap;
@@ -144,7 +191,7 @@
     /* DAY CELL */
     .day-cell {
       background: #fafafa;
-      border: 2px solid #aaa;
+      border: 3px solid #aaa;
       border-radius: 4px;
       padding: 6px;
       min-height: 120px;
@@ -152,12 +199,9 @@
       flex-direction: column;
       position: relative;
     }
-
-    /* BLANK CELLS - remove their border now */
     .day-cell.blank {
       border: none; /* remove border for out-of-month cells */
     }
-
     .day-header {
       display: flex;
       justify-content: space-between;
@@ -197,6 +241,7 @@
       margin-top: auto; 
     }
 
+
     /* Inline forms (Add Task, Add Comment) single line */
     .add-task-form, .add-comment-form {
       display: flex;
@@ -225,11 +270,12 @@
       background: #218838;
     }
 
+
     /* TASK ITEM */
     .task-item {
-	  display: flex;
-	  align-items: center;
-	  justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       background: #fff;
       border: 0px solid #ddd;
       border-radius: 4px;
@@ -243,60 +289,52 @@
       margin-bottom: 4px;
       color: #000; 
     }
-
-	.task-item.task-v .task-item-title {
-	  color: green;
-	}	
-	
-	.task-item.task-x .task-item-title {
-	  color: red;
-	}	
-	
+    .task-item.task-v .task-item-title {
+      color: green;
+    }	
+    .task-item.task-x .task-item-title {
+      color: red;
+    }	
     .mini-cubes {
       display: inline-block;
       margin-bottom: 4px;
     }
-	.mini-cube {
-	  display: inline-block;
-	  width: 16px;
-	  height: 16px;
-	  margin-right: 2px;
-	  border: 1px solid #ccc;
-	  background-color: #eee;
-	  position: relative; /* for positioning the pseudo-element */
-	  cursor: pointer;
-	}
-
-	.mini-cube.filled {
-	  background-color: #fff; /* or keep #eee, whichever you prefer */
-	}
-
-	.mini-cube.filled::before {
-	  content: "✓";         /* The check mark text (could use "✔" or "v" too) */
-	  font-size: 14px;      /* Adjust font size to fit */
-	  color: #1976d2;       /* Check mark color */
-	  position: absolute;
-	  top: 50%;
-	  left: 50%;
-	  transform: translate(-50%, -50%); /* center it in the cube */
-	  pointer-events: none;             /* let clicks pass through */
-	}
-
-	/* The X mode */
-	.mini-cube.x-mode {
-	  background-color: #fff; 
-	}
-	
-	.mini-cube.x-mode::before {
-	  content: "x";
-	  font-size: 14px;
-	  color: #c82333;  /* or any color for the “x” */
-	  position: absolute;
-	  top: 50%;
-	  left: 50%;
-	  transform: translate(-50%, -50%);
-	  pointer-events: none;
-	}
+    .mini-cube {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 2px;
+      border: 1px solid #ccc;
+      background-color: #eee;
+      position: relative;
+      cursor: pointer;
+    }
+    .mini-cube.filled {
+      background-color: #fff;
+    }
+    .mini-cube.filled::before {
+      content: "✓";
+      font-size: 14px;
+      color: #1976d2;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .mini-cube.x-mode {
+      background-color: #fff; 
+    }
+    .mini-cube.x-mode::before {
+      content: "x";
+      font-size: 14px;
+      color: #c82333;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
 
     .delete-task-btn {
       display: none;
@@ -351,25 +389,24 @@
     .add-comment-form input[type="text"] {
       width: 100px;
     }
-	
-	input[type="color"] {
-	  width: 35px;  /* Adjust to your preference */
-	  height: 20px; /* Same here */
-	  padding: 0;   /* Reset if needed */
-	  border-radius: 2px; /* Optional for round corners */
-	}
+    input[type="color"] {
+      width: 35px;
+      height: 20px;
+      padding: 0;
+      border-radius: 2px;
+    }
 
-	.site-footer {
-	  position: fixed;       /* stay in place, even on scroll */
-	  bottom: 10px;          /* distance from bottom edge */
-	  left: 10px;           /* distance from left edge */
-	  font-size: 0.85rem;    /* adjust text size */
-	  color: #666;           /* text color */
-	  background: #f0f0f0;   /* optional background */
-	  padding: 4px 8px;      /* optional padding */
-	  border-radius: 4px;    /* optional rounded corners */
-	}
-	
+    .site-footer {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.85rem;
+      color: #666;
+      background: #f0f0f0;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
     /* GUIDELINES CONTAINER */
     .guidelines-container {
       flex: 1;
@@ -436,6 +473,11 @@
   </style>
 </head>
 <body>
+  <!-- TABS SECTION: The topics + the plus button -->
+  <div class="tabs-header" id="tabsHeader">
+    <button id="addTopicBtn" class="add-topic-btn">+</button>
+  </div>
+
   <div class="app-container">
     <!-- LEFT: CALENDAR -->
     <div class="calendar-container">
@@ -510,14 +552,16 @@
 
   <script>
     /*************************************************************
-     *  GLOBAL STATE & INIT
+     *  MULTI-TOPIC DATA
      *************************************************************/
-    let currentYear, currentMonth;
-    let dayTasks = {};       // { "YYYY-MM-DD": [ {title, total, completed}, ...], ... }
-    let dayComments = {};    // { "YYYY-MM-DD": [ { text, color }, ... ], ... }
-    let guidelines = [];     // [ { text: "some text" }, ... ]
+    let topics = {};       // { "General": {dayTasks, dayComments, guidelines}, ... }
+    let currentTopic = ""; // The active topic name
 
-    // DOM references
+    // DOM references (tabs)
+    const tabsHeader = document.getElementById("tabsHeader");
+    const addTopicBtn = document.getElementById("addTopicBtn");
+
+    // DOM references - Calendar
     const calendarEl        = document.getElementById("calendar");
     const currentMonthYearEl= document.getElementById("currentMonthYear");
     const prevMonthBtn      = document.getElementById("prevMonthBtn");
@@ -541,10 +585,19 @@
     init();
 
     function init() {
-      // Load from localStorage
-      loadTasksFromLocalStorage();
-      loadCommentsFromLocalStorage();
-      loadGuidelinesFromLocalStorage();
+      loadTopicsFromLocalStorage();
+
+      // If no topics, create a default
+      if (!Object.keys(topics).length) {
+        topics["כללי"] = {
+          dayTasks: {},
+          dayComments: {},
+          guidelines: []
+        };
+      }
+      currentTopic = Object.keys(topics)[0]; // pick first
+
+      buildTabs();
 
       // Current date
       const today = new Date();
@@ -567,58 +620,131 @@
 
       // Guidelines
       guidelinesForm.addEventListener("submit", handleGuidelineSubmit);
+
+      // Add Topic with "+"
+      addTopicBtn.addEventListener("click", () => {
+        const newTopicName = prompt("הכנס שם נושא חדש:");
+        if (!newTopicName) return;
+
+        if (topics[newTopicName]) {
+          alert("נושא זה קיים כבר!");
+          return;
+        }
+        topics[newTopicName] = {
+          dayTasks: {},
+          dayComments: {},
+          guidelines: []
+        };
+        currentTopic = newTopicName;
+        saveTopicsToLocalStorage();
+        buildTabs();
+        renderCalendar();
+        renderGuidelines();
+      });
     }
 
     /*************************************************************
-     *  LOCAL STORAGE
+     *  TABS
      *************************************************************/
-    function loadTasksFromLocalStorage() {
-      const stored = localStorage.getItem("dayTasks");
-      dayTasks = stored ? JSON.parse(stored) : {};
-    }
-    function saveTasksToLocalStorage() {
-      localStorage.setItem("dayTasks", JSON.stringify(dayTasks));
+    function buildTabs() {
+      // Temporarily store the plus button
+      const plusBtn = addTopicBtn;
+      // Remove everything from tabsHeader
+      tabsHeader.innerHTML = "";
+
+      // Rebuild all topic tabs
+      const topicNames = Object.keys(topics);
+      topicNames.forEach((topicName) => {
+        const btn = document.createElement("button");
+        btn.className = "topic-tab";
+        btn.textContent = topicName;
+
+        if (topicName === currentTopic) {
+          btn.style.background = "#bbb"; // highlight active
+        }
+
+        // Switch topic on click
+        btn.addEventListener("click", () => {
+          currentTopic = topicName;
+          buildTabs();
+          renderCalendar();
+          renderGuidelines();
+        });
+
+        // small "x" to delete this topic
+        const delBtn = document.createElement("button");
+        delBtn.className = "del-topic-btn";
+        delBtn.textContent = "x";
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation(); // don't also switch to this topic
+          const sure = confirm(`מחיקת הנושא "${topicName}"?`);
+          if (sure) {
+            deleteTopic(topicName);
+          }
+        });
+        btn.appendChild(delBtn);
+
+        tabsHeader.appendChild(btn);
+      });
+
+      // Finally re-append the plus button
+      tabsHeader.appendChild(plusBtn);
     }
 
-    function loadCommentsFromLocalStorage() {
-      const stored = localStorage.getItem("dayComments");
-      dayComments = stored ? JSON.parse(stored) : {};
-    }
-    function saveCommentsToLocalStorage() {
-      localStorage.setItem("dayComments", JSON.stringify(dayComments));
-    }
+    function deleteTopic(topicName) {
+      delete topics[topicName];
+      saveTopicsToLocalStorage();
 
-    function loadGuidelinesFromLocalStorage() {
-      const stored = localStorage.getItem("guidelines");
-      guidelines = stored ? JSON.parse(stored) : [];
-    }
-    function saveGuidelinesToLocalStorage() {
-      localStorage.setItem("guidelines", JSON.stringify(guidelines));
+      // If we deleted the current topic, pick another or create new
+      if (!topics[currentTopic]) {
+        const topicKeys = Object.keys(topics);
+        if (topicKeys.length > 0) {
+          currentTopic = topicKeys[0];
+        } else {
+          // if all gone, create a default
+          topics["כללי"] = {
+            dayTasks: {},
+            dayComments: {},
+            guidelines: []
+          };
+          currentTopic = "כללי";
+          saveTopicsToLocalStorage();
+        }
+      }
+
+      buildTabs();
+      renderCalendar();
+      renderGuidelines();
     }
 
     /*************************************************************
-     *  SAVE / LOAD DATA MANUALLY
+     *  LOCAL STORAGE FOR TOPICS
+     *************************************************************/
+    function loadTopicsFromLocalStorage() {
+      const stored = localStorage.getItem("topicsData");
+      if (stored) {
+        topics = JSON.parse(stored);
+      } else {
+        topics = {};
+      }
+    }
+    function saveTopicsToLocalStorage() {
+      localStorage.setItem("topicsData", JSON.stringify(topics));
+    }
+
+    /*************************************************************
+     *  GET/SET ALL DATA (Used for Export/Import)
      *************************************************************/
     function getAllData() {
-      return {
-        dayTasks,
-        dayComments,
-        guidelines
-      };
+      return topics;
     }
-
     function setAllData(newData) {
-      if (newData.dayTasks) {
-        dayTasks = newData.dayTasks;
-      }
-      if (newData.dayComments) {
-        dayComments = newData.dayComments;
-      }
-      if (newData.guidelines) {
-        guidelines = newData.guidelines;
-      }
+      topics = newData;
     }
 
+    /*************************************************************
+     *  MANUAL SAVE / LOAD
+     *************************************************************/
     function exportAllDataAsFile() {
       const data = getAllData();
       const json = JSON.stringify(data, null, 2);
@@ -640,12 +766,12 @@
         const text = await file.text();
         const loaded = JSON.parse(text);
         setAllData(loaded);
+        saveTopicsToLocalStorage();
 
-        // Save to localStorage
-        saveTasksToLocalStorage();
-        saveCommentsToLocalStorage();
-        saveGuidelinesToLocalStorage();
-
+        buildTabs();
+        if (Object.keys(topics).length) {
+          currentTopic = Object.keys(topics)[0];
+        }
         renderCalendar();
         renderGuidelines();
         alert("הנתונים נטענו בהצלחה!");
@@ -660,6 +786,9 @@
      *  CALENDAR RENDERING & NAVIGATION
      *************************************************************/
     function renderCalendar() {
+      const topicData = topics[currentTopic];
+      const { dayTasks, dayComments } = topicData;
+
       calendarEl.innerHTML = "";
 
       const dateObj = new Date(currentYear, currentMonth);
@@ -668,22 +797,22 @@
 
       const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
       const lastDayOfMonth  = new Date(currentYear, currentMonth + 1, 0);
-      const startDayIndex   = firstDayOfMonth.getDay(); // 0..6 => Sunday..Saturday
+      const startDayIndex   = firstDayOfMonth.getDay();
       const totalDays       = lastDayOfMonth.getDate();
 
-      // Blank cells before the 1st
+      // Blank cells
       for (let i = 0; i < startDayIndex; i++) {
         const blankCell = document.createElement("div");
         blankCell.className = "day-cell blank";
         calendarEl.appendChild(blankCell);
       }
 
-      // Actual days
+      // Real days
       for (let day = 1; day <= totalDays; day++) {
         const dayCell = document.createElement("div");
         dayCell.classList.add("day-cell");
 
-        // day header
+        // Day header
         const dayHeader = document.createElement("div");
         dayHeader.className = "day-header";
 
@@ -714,8 +843,6 @@
         // tasks container
         const tasksContainer = document.createElement("div");
         tasksContainer.className = "tasks-container";
-
-        // retrieve tasks
         const dayKey2 = formatDateKey(currentYear, currentMonth, day);
         const tasks = dayTasks[dayKey2] || [];
         tasks.forEach((task, index) => {
@@ -732,11 +859,9 @@
           commentsContainer.appendChild(commentDiv);
         });
 
-        // assemble
         dayCell.appendChild(dayHeader);
         dayCell.appendChild(tasksContainer);
         dayCell.appendChild(commentsContainer);
-
         calendarEl.appendChild(dayCell);
       }
     }
@@ -756,156 +881,129 @@
     /*************************************************************
      *  TASKS: CREATE, UPDATE, DELETE
      *************************************************************/
-	function createTaskItem(dayKey, task, taskIndex) {
-	  const item = document.createElement("div");
-	  item.className = "task-item";
+    function createTaskItem(dayKey, task, taskIndex) {
+      const item = document.createElement("div");
+      item.className = "task-item";
 
-	  // Delete button
-	  const deleteBtn = document.createElement("button");
-	  deleteBtn.className = "delete-task-btn";
-	  deleteBtn.textContent = "מחק";
-	  deleteBtn.addEventListener("click", () => {
-		deleteTask(dayKey, taskIndex);
-	  });
-	  item.appendChild(deleteBtn);
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-task-btn";
+      deleteBtn.textContent = "מחק";
+      deleteBtn.addEventListener("click", () => {
+        deleteTask(dayKey, taskIndex);
+      });
+      item.appendChild(deleteBtn);
 
-	  // Title
-	  const titleEl = document.createElement("div");
-	  titleEl.className = "task-item-title";
-	  titleEl.textContent = task.title;
-	  item.appendChild(titleEl);
+      // Title
+      const titleEl = document.createElement("div");
+      titleEl.className = "task-item-title";
+      titleEl.textContent = task.title;
+      item.appendChild(titleEl);
 
-	  // Container for sub-task cubes
-	  const cubesContainer = document.createElement("div");
-	  cubesContainer.className = "mini-cubes";
-
-	  // For each sub-task:
-	  for (let i = 0; i < task.total; i++) {
-		const cube = document.createElement("div");
-		cube.className = "mini-cube";
-
-		// If subTaskStates doesn’t exist, create a default array
-		if (!task.subTaskStates) {
-		  task.subTaskStates = [];
-		}
-		if (!task.subTaskStates[i]) {
-		  // default to "empty"
-		  task.subTaskStates[i] = "empty";
-		}
-
-		// Apply the stored state:
-		if (task.subTaskStates[i] === "filled") {
-		  cube.classList.add("filled");
-		} else if (task.subTaskStates[i] === "x-mode") {
-		  cube.classList.add("x-mode");
-		}
-		// else it's empty => no classes
-
-		// On click => cycle states, update data model, re-render if needed
-		cube.addEventListener("click", () => {
-		  const currentState = task.subTaskStates[i];
-
-		  if (currentState === "empty") {
-			// empty => go to "filled"
-			task.subTaskStates[i] = "filled";
-			cube.classList.remove("x-mode");
-			cube.classList.add("filled");
-
-		  } else if (currentState === "filled") {
-			// "filled" => "x-mode"
-			task.subTaskStates[i] = "x-mode";
-			cube.classList.remove("filled");
-			cube.classList.add("x-mode");
-
-		  } else if (currentState === "x-mode") {
-			// "x-mode" => "empty"
-			task.subTaskStates[i] = "empty";
-			cube.classList.remove("x-mode");
-			// no "filled" => empty
-		  }
-
-		  // After each click, update the title color based on all cubes
-		  updateTaskTitleColor(item);
-		  
-		  // Re-save to localStorage
-		  updateTask(dayKey, taskIndex, task);
-
-		});
-
-		cubesContainer.appendChild(cube);
-	  }
-	  item.appendChild(cubesContainer);
-
-	  // Initially, set color to black or check if needed
-	  updateTaskTitleColor(item);
-
-	  return item;
-	}
-
-	function updateTask(dayKey, taskIndex, updatedTask) {
-	  dayTasks[dayKey][taskIndex] = updatedTask;
-	  saveTasksToLocalStorage();
-	  renderCalendar(); // or a partial re-render if you prefer
-	}
-
-	function updateTaskTitleColor(item) {
-	  const titleEl = item.querySelector(".task-item-title");
-	  const cubes = item.querySelectorAll(".mini-cube");
-
-	  let allCheck = true; // all “v”
-	  let allX = true;     // all “x”
-
-	  cubes.forEach((cube) => {
-		const filled = cube.classList.contains("filled");   // “v”
-		const xMode = cube.classList.contains("x-mode");    // “x”
-
-		if (!filled && !xMode) {
-		  // This cube is no mark => neither allCheck nor allX
-		  allCheck = false;
-		  allX = false;
-		} else if (filled) {
-		  // This cube is “v” => cannot be “x” => so not allX
-		  allX = false;
-		} else if (xMode) {
-		  // This cube is “x” => cannot be “v” => so not allCheck
-		  allCheck = false;
-		}
-	  });
-
-	  if (allCheck && cubes.length > 0) {
-		// All cubes are “v”
-		titleEl.style.color = "green";
-	  } else if (allX && cubes.length > 0) {
-		// All cubes are “x”
-		titleEl.style.color = "red";
-	  } else {
-		// Mixed or none => black
-		titleEl.style.color = "#000";
-	  }
-	}
-
-
-    function addTask(dayKey, newTask) {
-      if (!dayTasks[dayKey]) {
-        dayTasks[dayKey] = [];
+      // subTaskStates
+      if (!task.subTaskStates) {
+        task.subTaskStates = Array(task.total).fill("empty");
       }
-      dayTasks[dayKey].push(newTask);
-      saveTasksToLocalStorage();
-      renderCalendar();
+
+      const cubesContainer = document.createElement("div");
+      cubesContainer.className = "mini-cubes";
+
+      for (let i = 0; i < task.total; i++) {
+        const cube = document.createElement("div");
+        cube.className = "mini-cube";
+
+        // apply existing state
+        if (task.subTaskStates[i] === "filled") {
+          cube.classList.add("filled");
+        } else if (task.subTaskStates[i] === "x-mode") {
+          cube.classList.add("x-mode");
+        }
+
+        // cycle states on click
+        cube.addEventListener("click", () => {
+          const currentState = task.subTaskStates[i];
+          if (currentState === "empty") {
+            task.subTaskStates[i] = "filled";
+            cube.classList.remove("x-mode");
+            cube.classList.add("filled");
+          } else if (currentState === "filled") {
+            task.subTaskStates[i] = "x-mode";
+            cube.classList.remove("filled");
+            cube.classList.add("x-mode");
+          } else {
+            // x-mode => empty
+            task.subTaskStates[i] = "empty";
+            cube.classList.remove("x-mode");
+          }
+
+          // update title color
+          updateTaskTitleColor(item);
+
+          // update the data model
+          updateTask(dayKey, taskIndex, task);
+        });
+
+        cubesContainer.appendChild(cube);
+      }
+      item.appendChild(cubesContainer);
+
+      // check if all “v” or all “x”
+      updateTaskTitleColor(item);
+      return item;
+    }
+
+    function updateTaskTitleColor(item) {
+      const titleEl = item.querySelector(".task-item-title");
+      const cubes = item.querySelectorAll(".mini-cube");
+
+      let allCheck = true; // all “v”
+      let allX = true;     // all “x”
+
+      cubes.forEach((cube) => {
+        const filled = cube.classList.contains("filled");
+        const xMode = cube.classList.contains("x-mode");
+
+        if (!filled && !xMode) {
+          allCheck = false;
+          allX = false;
+        } else if (filled) {
+          allX = false;
+        } else if (xMode) {
+          allCheck = false;
+        }
+      });
+
+      if (allCheck && cubes.length > 0) {
+        titleEl.style.color = "green";
+      } else if (allX && cubes.length > 0) {
+        titleEl.style.color = "red";
+      } else {
+        titleEl.style.color = "#000";
+      }
     }
 
     function updateTask(dayKey, taskIndex, updatedTask) {
-      dayTasks[dayKey][taskIndex] = updatedTask;
-      saveTasksToLocalStorage();
+      topics[currentTopic].dayTasks[dayKey][taskIndex] = updatedTask;
+      saveTopicsToLocalStorage();
+      renderCalendar();
+    }
+
+    function addTask(dayKey, newTask) {
+      const tData = topics[currentTopic];
+      if (!tData.dayTasks[dayKey]) {
+        tData.dayTasks[dayKey] = [];
+      }
+      tData.dayTasks[dayKey].push(newTask);
+      saveTopicsToLocalStorage();
       renderCalendar();
     }
 
     function deleteTask(dayKey, taskIndex) {
-      dayTasks[dayKey].splice(taskIndex, 1);
-      if (dayTasks[dayKey].length === 0) {
-        delete dayTasks[dayKey];
+      const tData = topics[currentTopic];
+      tData.dayTasks[dayKey].splice(taskIndex, 1);
+      if (!tData.dayTasks[dayKey].length) {
+        delete tData.dayTasks[dayKey];
       }
-      saveTasksToLocalStorage();
+      saveTopicsToLocalStorage();
       renderCalendar();
     }
 
@@ -913,11 +1011,12 @@
      *  COMMENTS
      *************************************************************/
     function addComment(dayKey, text, color) {
-      if (!dayComments[dayKey]) {
-        dayComments[dayKey] = [];
+      const tData = topics[currentTopic];
+      if (!tData.dayComments[dayKey]) {
+        tData.dayComments[dayKey] = [];
       }
-      dayComments[dayKey].push({ text, color });
-      saveCommentsToLocalStorage();
+      tData.dayComments[dayKey].push({ text, color });
+      saveTopicsToLocalStorage();
       renderCalendar();
     }
 
@@ -940,11 +1039,12 @@
     }
 
     function deleteComment(dayKey, commentIndex) {
-      dayComments[dayKey].splice(commentIndex, 1);
-      if (dayComments[dayKey].length === 0) {
-        delete dayComments[dayKey];
+      const tData = topics[currentTopic];
+      tData.dayComments[dayKey].splice(commentIndex, 1);
+      if (!tData.dayComments[dayKey].length) {
+        delete tData.dayComments[dayKey];
       }
-      saveCommentsToLocalStorage();
+      saveTopicsToLocalStorage();
       renderCalendar();
     }
 
@@ -954,8 +1054,8 @@
         const dayNumberEl = cell.querySelector(".day-number");
         if (!dayNumberEl) return;
         const dayNumber = parseInt(dayNumberEl.textContent, 10);
-
         const cellKey = formatDateKey(currentYear, currentMonth, dayNumber);
+
         if (cellKey === dayKey) {
           const existingForm = cell.querySelector(".add-comment-form");
           if (existingForm) {
@@ -1021,7 +1121,14 @@
         const m = curr.getMonth();
         const d = curr.getDate();
         const dayKey = formatDateKey(y, m, d);
-        addTask(dayKey, { title, total, completed: 0 });
+
+        const newTask = {
+          title,
+          total,
+          subTaskStates: Array(total).fill("empty")
+        };
+        addTask(dayKey, newTask);
+
         curr.setDate(curr.getDate() + 1);
       }
 
@@ -1041,8 +1148,8 @@
         const dayNumberEl = cell.querySelector(".day-number");
         if (!dayNumberEl) return;
         const dayNumber = parseInt(dayNumberEl.textContent, 10);
-
         const cellKey = formatDateKey(currentYear, currentMonth, dayNumber);
+
         if (cellKey === dayKey) {
           const existingForm = cell.querySelector(".add-task-form");
           if (existingForm) {
@@ -1076,7 +1183,12 @@
             e.preventDefault();
             const title = titleInput.value.trim();
             const total = parseInt(cubesInput.value, 10) || 1;
-            addTask(cellKey, { title, total, completed: 0 });
+            const newTask = {
+              title,
+              total,
+              subTaskStates: Array(total).fill("empty")
+            };
+            addTask(cellKey, newTask);
             form.remove();
           });
 
@@ -1102,12 +1214,14 @@
      *  GUIDELINES
      *************************************************************/
     function renderGuidelines() {
+      const tData = topics[currentTopic];
+      const { guidelines } = tData;
+
       guidelinesListEl.innerHTML = "";
       guidelines.forEach((gl, index) => {
         const item = document.createElement("div");
         item.className = "guideline-item";
 
-        // delete
         const delBtn = document.createElement("button");
         delBtn.className = "delete-guideline-btn";
         delBtn.textContent = "מחק";
@@ -1116,7 +1230,6 @@
         });
         item.appendChild(delBtn);
 
-        // text: add a number in front, e.g. "1) ..."
         const textEl = document.createElement("div");
         textEl.textContent = `${index + 1}) ${gl.text}`;
         item.appendChild(textEl);
@@ -1134,17 +1247,18 @@
     }
 
     function addGuideline(newGL) {
-      guidelines.push(newGL);
-      saveGuidelinesToLocalStorage();
+      topics[currentTopic].guidelines.push(newGL);
+      saveTopicsToLocalStorage();
       renderGuidelines();
     }
 
     function deleteGuideline(index) {
-      guidelines.splice(index, 1);
-      saveGuidelinesToLocalStorage();
+      topics[currentTopic].guidelines.splice(index, 1);
+      saveTopicsToLocalStorage();
       renderGuidelines();
     }
   </script>
+
   <footer class="site-footer">
     © 2024 .Smitrani310@gmail.com. All rights reserved
   </footer>
