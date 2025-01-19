@@ -215,6 +215,14 @@
       display: flex;
       gap: 6px;
     }
+	.day-cell.today {
+	  border-color: #1976d2; /* or green, etc. */
+	  background: #e3f2fd;    /* light highlight */
+	}
+	.day-cell.today .day-number {
+	  color: #1976d2;
+	  font-weight: bold;
+	}
     .add-task-btn, .add-comment-btn {
       background: #ccc;
       border: none;
@@ -794,7 +802,12 @@
       const lastDayOfMonth  = new Date(currentYear, currentMonth + 1, 0);
       const startDayIndex   = firstDayOfMonth.getDay();
       const totalDays       = lastDayOfMonth.getDate();
-
+	  
+	  const todayDate = new Date(); 
+	  const todayYear = todayDate.getFullYear();
+	  const todayMonth = todayDate.getMonth();
+	  const todayDay = todayDate.getDate();
+	  
       // Blank cells before day 1
       for (let i = 0; i < startDayIndex; i++) {
         const blankCell = document.createElement("div");
@@ -806,7 +819,16 @@
       for (let day = 1; day <= totalDays; day++) {
         const dayCell = document.createElement("div");
         dayCell.classList.add("day-cell");
-
+		
+	   // Check if this day is "today"
+		if (
+		  currentYear === todayYear &&
+		  currentMonth === todayMonth &&
+		  day === todayDay
+		) {
+		  dayCell.classList.add("today");
+		}	
+		
         // Day header
         const dayHeader = document.createElement("div");
         dayHeader.className = "day-header";
